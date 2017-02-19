@@ -1,5 +1,5 @@
 from aiohttp import web
-from aiopg.sa import create_engine
+from aiopg.sa import Engine, create_engine
 
 
 async def init_pg(app: web.Application):
@@ -9,7 +9,7 @@ async def init_pg(app: web.Application):
         app (web.Application): Application instance
 
     """
-    engine = await create_engine(
+    engine: Engine = await create_engine(
         database='async-lab',
         user='async-lab',
         password='async-lab',
