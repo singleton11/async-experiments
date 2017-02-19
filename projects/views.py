@@ -14,7 +14,12 @@ async def index(request: web.Request) -> web.Response:
         web.Response: Response instance
 
     """
+    project_list = []
     async with request.app['db'].acquire() as conn:
-        project_list = await conn.execute(select([Project]))
+        result = await conn.execute(select([Project]))
 
-    return web.json_response({'hello': 'world'})
+        for row in result:
+            project_list.append({'id': row.id, 'title': row.title})
+            # TODO: This have to be replaced to marshmallow deserializer
+
+    return web.json_response(project_list)
