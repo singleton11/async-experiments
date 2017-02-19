@@ -7,5 +7,5 @@ ipython = "*"
 
 [packages]
 aiohttp = "*"
-peewee-async = "*"
 aiopg = "*"
+SQLAlchemy = "*"
