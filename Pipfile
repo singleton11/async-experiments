@@ -2,8 +2,10 @@
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
-[packages]
-aiohttp = "*"
-
 [dev-packages]
 ipython = "*"
+
+[packages]
+aiohttp = "*"
+peewee-async = "*"
+aiopg = "*"
