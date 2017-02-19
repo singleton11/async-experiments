@@ -1,9 +1,10 @@
 import peewee
 import peewee_async
 
-database = peewee_async.PostgresqlDatabase(
-    'postgres://async-lab@postgres/async-lab?password=async-lab'
-)
+database = peewee_async.PostgresqlDatabase('async-lab',
+                                           user='async-lab',
+                                           password='async-lab',
+                                           host='postgres')
 
 
 class Project(peewee.Model):

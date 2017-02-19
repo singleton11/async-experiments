@@ -1,0 +1,10 @@
+version: '2'
+services:
+  postgres:
+    image: mdillon/postgis
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=async-lab
+      - POSTGRES_USER=async-lab
+      - POSTGRES_PASSWORD=async-lab
