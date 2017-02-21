@@ -1,11 +1,15 @@
-from aiohttp import web
-from sqlalchemy import select
+from json.decoder import JSONDecodeError
 
-from projects.serializers import ProjectSchema
+import colander
+from aiohttp import web
+from sqlalchemy import insert, select
+
 from .models import Project
 
 
 class ProjectView(web.View):
+    """View for projects"""
+
     async def get(self) -> web.Response:
         """Get request handler
 
@@ -13,8 +17,29 @@ class ProjectView(web.View):
             web.Response: Response instance
 
         """
-        project_schema: ProjectSchema = ProjectSchema(many=True)
 
         async with self.request.app['db'].acquire() as conn:
+            projects = []
             result = await conn.execute(select([Project]))
-            return web.json_response(project_schema.dump(result).data)
+            for row in result:
+                projects.append(Project.__colanderalchemy__.deserialize(row))
+            return web.json_response(projects)
+
+    async def post(self) -> web.Response:
+        """Create project
+
+        Returns:
+            web.Response: Response instance
+
+        """
+        try:
+            data: dict = await self.request.json()
+            deserialized_data: dict = Project.__colanderalchemy__.deserialize(
+                data)
+            async with self.request.app['db'].acquire() as conn:
+                await conn.execute(insert(Project).values(**deserialized_data))
+                return web.json_response(deserialized_data)
+        except JSONDecodeError:
+            return web.json_response({'error': 'This is not JSON'}, status=400)
+        except colander.Invalid as e:
+            return web.json_response(e.asdict(), status=400)

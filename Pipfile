@@ -2,13 +2,13 @@
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
-[dev-packages]
-ipython = "*"
-
 [packages]
 aiohttp = "*"
 aiopg = "*"
 SQLAlchemy = "*"
 sqlalchemy-migrate = "*"
-marshmallow-sqlalchemy = "*"
 alembic = "*"
+ColanderAlchemy = "*"
+
+[dev-packages]
+ipython = "*"

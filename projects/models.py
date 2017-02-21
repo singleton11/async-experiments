@@ -1,3 +1,4 @@
+from colanderalchemy import setup_schema
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -15,3 +16,6 @@ class Project(Base):
 
     id: int = Column(Integer, primary_key=True)
     title: str = Column(String, nullable=False)
+
+
+setup_schema(None, Project)
