@@ -1,21 +1,22 @@
-"""create projects table
+"""create project table
 
-Revision ID: 8e26f4a4094e
+Revision ID: 3b6fa5663fc1
 Revises: 
-Create Date: 2017-02-21 22:24:07.316461
+Create Date: 2017-02-21 23:21:00.930560
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = '8e26f4a4094e'
+revision = '3b6fa5663fc1'
 down_revision = None
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
+    """Create projects table"""
     op.create_table(
         'projects',
         sa.Column('id', sa.Integer, primary_key=True),
@@ -24,4 +25,5 @@ def upgrade():
 
 
 def downgrade():
+    """Drop projects table"""
     op.drop_table('projects')
