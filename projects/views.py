@@ -43,3 +43,26 @@ class ProjectListView(web.View):
             return web.json_response({'error': 'This is not JSON'}, status=400)
         except colander.Invalid as e:
             return web.json_response(e.asdict(), status=400)
+
+
+class ProjectDetailView(web.View):
+    """A detail view for project"""
+
+    async def get(self) -> web.Response:
+        """Get project by id
+
+        Returns:
+            web.Response: Response
+
+        """
+        project_id: int = self.request.match_info['id']
+        async with self.request.app['db'].acquire() as conn:
+            result = await conn.execute(
+                select([Project]).where(Project.id == project_id)
+            )
+            if not result.rowcount:
+                return web.json_response({'error': 'Not Found'}, status=404)
+            result = await result.fetchone()
+            return web.json_response(
+                Project.__colanderalchemy__.deserialize(result)
+            )
