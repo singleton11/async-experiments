@@ -7,7 +7,7 @@ from sqlalchemy import insert, select
 from .models import Project
 
 
-class ProjectView(web.View):
+class ProjectListView(web.View):
     """View for projects"""
 
     async def get(self) -> web.Response:
