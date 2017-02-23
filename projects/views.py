@@ -1,8 +1,9 @@
 from json.decoder import JSONDecodeError
+from typing import Dict, Tuple
 
 import colander
 from aiohttp import web
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update
 
 from .models import Project
 
@@ -37,7 +38,11 @@ class ProjectListView(web.View):
             deserialized_data: dict = Project.__colanderalchemy__.deserialize(
                 data)
             async with self.request.app['db'].acquire() as conn:
-                await conn.execute(insert(Project).values(**deserialized_data))
+                result = await conn.execute(insert(Project).values(
+                    **deserialized_data
+                ))
+                project_id: int = await result.fetchone()
+                deserialized_data.update({'id': project_id})
                 return web.json_response(deserialized_data)
         except JSONDecodeError:
             return web.json_response({'error': 'This is not JSON'}, status=400)
@@ -62,7 +67,30 @@ class ProjectDetailView(web.View):
             )
             if not result.rowcount:
                 return web.json_response({'error': 'Not Found'}, status=404)
-            result = await result.fetchone()
+            result: Tuple[int, str] = await result.fetchone()
             return web.json_response(
                 Project.__colanderalchemy__.deserialize(result)
             )
+
+    async def put(self) -> web.Response:
+        """Update project
+
+        Returns:
+            web.Response: Response
+
+        """
+        try:
+            project_id: int = self.request.match_info['id']
+            data: Dict[str, int] = await self.request.json()
+            deserialized_data: Dict[int, str] = \
+                Project.__colanderalchemy__.deserialize(data)
+            async with self.request.app['db'].acquire() as conn:
+                await conn.execute(update(Project).values(
+                    **deserialized_data
+                ).where(Project.id == project_id))
+                deserialized_data.update({'id': project_id})
+                return web.json_response(deserialized_data)
+        except JSONDecodeError:
+            return web.json_response({'error': 'This is not JSON'}, status=400)
+        except colander.Invalid as e:
+            return web.json_response(e.asdict(), status=400)
