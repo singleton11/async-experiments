@@ -88,7 +88,7 @@ class ProjectDetailView(web.View):
                 await conn.execute(update(Project).values(
                     **deserialized_data
                 ).where(Project.id == project_id))
-                deserialized_data.update({'id': project_id})
+                deserialized_data.update(dict(id=project_id))
                 return web.json_response(deserialized_data)
         except JSONDecodeError:
             return web.json_response({'error': 'This is not JSON'}, status=400)
