@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 import colander
 from aiohttp import web
-from sqlalchemy import insert, select, update
+from sqlalchemy import delete, insert, select, update
 
 from .models import Project
 
@@ -94,3 +94,17 @@ class ProjectDetailView(web.View):
             return web.json_response({'error': 'This is not JSON'}, status=400)
         except colander.Invalid as e:
             return web.json_response(e.asdict(), status=400)
+
+    async def delete(self) -> web.Response:
+        """Delete project
+
+        Returns:
+            web.Response
+
+        """
+        project_id: int = self.request.match_info['id']
+        async with self.request.app['db'].acquire() as conn:
+            await conn.execute(delete(Project).where(
+                Project.id == project_id
+            ))
+            return web.json_response(status=204)
