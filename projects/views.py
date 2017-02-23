@@ -8,7 +8,7 @@ from .models import Project
 
 
 class ProjectListView(web.View):
-    """View for projects"""
+    """A list view for projects"""
 
     async def get(self) -> web.Response:
         """Get request handler
